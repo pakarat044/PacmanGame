@@ -25,6 +25,7 @@ class Pacman(Sprite):
 
         x, y = maze.piece_center(r, c)
         super().__init__(app, 'images/pacman.png', x, y)
+        # super().__init__(app, 'images/pacman.png', x, y)
         self.dot_eaten_observers = []
         self.state = NormalPacmanState(self)
 
@@ -48,13 +49,46 @@ class Pacman(Sprite):
     def set_next_direction(self, direction):
         self.next_direction = direction
 
+class Pacman2(Sprite):
+    def __init__(self, app, maze, r, c):
+        self.r = r
+        self.c = c
+        self.maze = maze
+
+        self.direction = DIR_STILL
+        self.next_direction = DIR_STILL
+
+        x, y = maze.piece_center(r, c)
+        super().__init__(app, 'images/pacman2.png', x, y)
+        self.dot_eaten_observers = []
+        self.state = NormalPacmanState(self)
+
+    def update(self):
+        if self.maze.is_at_center(self.x, self.y):
+            r, c = self.maze.xy_to_rc(self.x, self.y)
+
+            if self.maze.has_dot_at(r, c):
+                self.maze.eat_dot_at(r, c)
+                for f in self.dot_eaten_observers:
+                    f()
+                self.state.random_State()
+
+            if self.maze.is_movable_direction(r, c, self.next_direction):
+                self.direction = self.next_direction
+            else:
+                self.direction = DIR_STILL
+
+        self.state.move_pacman()
+
+    def set_next_direction(self, direction):
+        self.next_direction = direction
 
 class PacmanGame(GameApp):
     def init_game(self):
         self.maze = Maze(self, CANVAS_WIDTH, CANVAS_HEIGHT)
 
         self.pacman1 = Pacman(self, self.maze, 1, 1)
-        self.pacman2 = Pacman(
+        self.pacman2 = Pacman2(
             self, self.maze, self.maze.get_height() - 2, self.maze.get_width() - 2)
 
         self.pacman1_score_text = Text(self, 'P1: 0', 100, 20)
