@@ -4,6 +4,7 @@ from gamelib import Sprite, GameApp, Text
 
 from dir_consts import *
 from maze import Maze
+import random
 
 CANVAS_WIDTH = 800
 CANVAS_HEIGHT = 600
@@ -18,6 +19,8 @@ class Pacman(Sprite):
         self.r = r
         self.c = c
         self.maze = maze
+        # self.is_super_speed = False
+        # self.super_speed_counter = 0
 
         self.direction = DIR_STILL
         self.next_direction = DIR_STILL
@@ -25,6 +28,7 @@ class Pacman(Sprite):
         x, y = maze.piece_center(r, c)
         super().__init__(app, 'images/pacman.png', x, y)
         self.dot_eaten_observers = []
+        self.state = NormalPacmanState(self)
 
 
     def update(self):
@@ -35,17 +39,18 @@ class Pacman(Sprite):
                 self.maze.eat_dot_at(r, c)
                 for f in self.dot_eaten_observers:
                     f()
+                self.state.random_State()
+                
 
             if self.maze.is_movable_direction(r, c, self.next_direction):
                 self.direction = self.next_direction
             else:
                 self.direction = DIR_STILL
 
-        self.x += PACMAN_SPEED * DIR_OFFSET[self.direction][0]
-        self.y += PACMAN_SPEED * DIR_OFFSET[self.direction][1]
-
+        self.state.move_pacman()
     def set_next_direction(self, direction):
         self.next_direction = direction
+
 
 
 class PacmanGame(GameApp):
@@ -107,6 +112,35 @@ class PacmanGame(GameApp):
     def dot_eaten_by_pacman2(self):
         self.pacman2_score += 1
         self.update_scores()
+
+class NormalPacmanState:
+    def __init__(self, pacman):
+        self.pacman = pacman
+       
+
+    def random_State(self):
+        if random.random() < 0.1:
+            self.pacman.state = SuperPacmanState(self.pacman)
+            
+    def move_pacman(self):
+
+        self.pacman.x += PACMAN_SPEED * DIR_OFFSET[self.pacman.direction][0]
+        self.pacman.y += PACMAN_SPEED * DIR_OFFSET[self.pacman.direction][1]
+
+   
+    
+
+class SuperPacmanState(NormalPacmanState):
+    def __init__(self, pacman):
+        self.pacman = pacman
+        self.super_speed_counter = 0
+
+    def move_pacman(self):
+        
+        speed = 2 * PACMAN_SPEED
+        self.super_speed_counter += 1
+        if self.super_speed_counter > 50:
+            self.pacman.state = NormalPacmanState(self.pacman)
 
 
 
