@@ -49,6 +49,7 @@ class Pacman(Sprite):
     def set_next_direction(self, direction):
         self.next_direction = direction
 
+
 class Pacman2(Sprite):
     def __init__(self, app, maze, r, c):
         self.r = r
@@ -82,6 +83,7 @@ class Pacman2(Sprite):
 
     def set_next_direction(self, direction):
         self.next_direction = direction
+
 
 class PacmanGame(GameApp):
     def init_game(self):
