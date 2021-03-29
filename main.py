@@ -139,8 +139,8 @@ class SuperPacmanState(NormalPacmanState):
         self.super_speed_counter += 1
         if self.super_speed_counter > 50:
             self.pacman.state = NormalPacmanState(self.pacman)
-        self.pacman.x += PACMAN_SPEED * DIR_OFFSET[self.pacman.direction][0]
-        self.pacman.y += PACMAN_SPEED * DIR_OFFSET[self.pacman.direction][1]
+        self.pacman.x += speed * DIR_OFFSET[self.pacman.direction][0]
+        self.pacman.y += speed * DIR_OFFSET[self.pacman.direction][1]
 
 
 
