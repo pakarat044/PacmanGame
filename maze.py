@@ -2,9 +2,21 @@ from gamelib import Sprite
 from dir_consts import *
 import tkinter as tk
 
+
 class Dot(Sprite):
-    def __init__(self, app, x, y,photo_image):
-        super().__init__(app, 'images/dot.png', x, y,photo_image= photo_image)
+    def __init__(self, app, x, y, photo_image):
+        super().__init__(app, 'images/candy.png', x, y, photo_image=photo_image),
+
+        self.is_eaten = False
+
+    def get_eaten(self):
+        self.is_eaten = True
+        self.hide()
+
+
+class Dot(Sprite):
+    def __init__(self, app, x, y, photo_image):
+        super().__init__(app, 'images/candy.png', x, y, photo_image=photo_image),
 
         self.is_eaten = False
 
@@ -14,8 +26,8 @@ class Dot(Sprite):
 
 
 class Wall(Sprite):
-    def __init__(self, app, x, y,photo_image = None):
-        super().__init__(app, 'images/wall.png', x, y,photo_image=photo_image)
+    def __init__(self, app, x, y, photo_image=None):
+        super().__init__(app, 'images/candyfloss.png', x, y, photo_image=photo_image)
 
 
 class Maze:
@@ -32,7 +44,7 @@ class Maze:
         "#.#...#......#...#.#",
         "#.###.###..###.###.#",
         "#..................#",
-        "####################",    
+        "####################",
     ]
 
     WALL_CHAR = '#'
@@ -51,15 +63,15 @@ class Maze:
         self.has_active_dots = {}
         for i in range(self.get_height()):
             for j in range(self.get_width()):
-                self.has_active_dots[(i,j)] = Maze.MAP[i][j] == Maze.DOT_CHAR
+                self.has_active_dots[(i, j)] = Maze.MAP[i][j] == Maze.DOT_CHAR
 
     def init_maze_sprites(self):
         self.walls = []
         self.dots = {}
 
         self.init_active_dots()
-        self.wall_image = tk.PhotoImage(file = "images/wall.png")
-        self.dot_image = tk.PhotoImage(file= "images/dot.png")
+        self.wall_image = tk.PhotoImage(file="images/candyfloss.png")
+        self.dot_image = tk.PhotoImage(file="images/candy.png")
 
         for i in range(self.get_height()):
             for j in range(self.get_width()):
@@ -70,8 +82,8 @@ class Maze:
                     self.walls.append(wall)
 
                 if self.has_dot_at(i, j):
-                    dot = Dot(self.app, x, y,self.dot_image)
-                    self.dots[(i,j)] = dot
+                    dot = Dot(self.app, x, y, self.dot_image)
+                    self.dots[(i, j)] = dot
 
     def __init__(self, app, canvas_width, canvas_height):
         self.app = app
@@ -93,16 +105,16 @@ class Maze:
         return Maze.MAP[r][c] == Maze.WALL_CHAR
 
     def has_dot_at(self, r, c):
-        if (r,c) in self.has_active_dots:
-            return self.has_active_dots[(r,c)]
+        if (r, c) in self.has_active_dots:
+            return self.has_active_dots[(r, c)]
         else:
             return False
 
     def eat_dot_at(self, r, c):
-        dot = self.dots[(r,c)]
+        dot = self.dots[(r, c)]
         dot.get_eaten()
 
-        self.has_active_dots[(r,c)] = False
+        self.has_active_dots[(r, c)] = False
 
     def is_movable_direction(self, r, c, direction):
         nr = r + DIR_RC_OFFSET[direction][0]
@@ -118,4 +130,3 @@ class Maze:
 
     def get_width(self):
         return len(Maze.MAP[0])
-
